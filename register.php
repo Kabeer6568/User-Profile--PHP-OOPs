@@ -20,6 +20,8 @@ if (isset($_POST['register'])) {
     else{
     $user->register($_POST['username'] , $_POST['useremail'] , $_POST['userpass'] , $_POST['usernum'] , 
     $_POST['usercity'] , $_POST['usercountry'] , $_FILES['user_img']);
+
+    
     }
     
 }

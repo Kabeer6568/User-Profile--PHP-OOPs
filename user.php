@@ -34,7 +34,8 @@ class Users{
             $user_city , $target_file);
 
             if ($stat->execute()) {
-                echo "User Registered";
+                
+                header("location: profile.php");
             }
         }
         else{
@@ -54,6 +55,34 @@ class Users{
         $result = $stat->get_result();
         
         return $result->num_rows > 0;
+    }
+
+    public function login($userInput , $userpass){
+
+        $login_query = "SELECT * FROM user_data WHERE user_name = ? OR user_email = ?";
+        $stat = $this->conn->prepare($login_query);
+        $stat->bind_param("ss" , $userInput , $userInput );
+        $stat->execute();
+        $res = $stat->get_result();
+
+        if ($res->num_rows > 0) {
+            $rows = $res->fetch_assoc();
+            $stored_hash = $rows['user_pass'];
+            if (password_verify($userpass , $stored_hash)) {
+                $_SESSION['user_id'] = $rows['id'];
+                $_SESSION['user_name'] = $rows['user_name'];
+
+                echo "Login successful. Welcome" . htmlspecialchars($rows['user_name']);
+            }
+            else{
+                echo "Incorrect Password";
+            }
+        }
+        else{
+            echo "Incorrect Username Or Email";
+        }
+
+
     }
 
 }
