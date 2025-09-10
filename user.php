@@ -105,6 +105,91 @@ class Users{
         if (!empty($_SESSION['user_id'])) {
             header("location: profile.php");
         }
+        
     }
 
+    public function profile_data($id){
+
+        $profile_query = "SELECT user_name , user_email , user_pass , user_num , 
+        user_country , user_city , user_profile_img FROM user_data WHERE id = ?";
+
+        $stat = $this->conn->prepare($profile_query);
+        $stat->bind_param("i" , $id);
+
+        $stat->execute();
+
+        return $res = $stat->get_result();
+
+    }
+
+    public function viewAll(){
+
+        $viewAll_query = "SELECT * FROM user_data";
+
+        $stat = $this->conn->query($viewAll_query);
+
+        return $stat;
+
+    }
+
+    public function getByID($id){
+
+        $getByID_query = "SELECT * FROM user_data WHERE id = ?";
+        $stat = $this->conn->prepare($getByID_query);
+        $stat->bind_param("i" , $id);
+        $stat->execute();
+
+        return $res = $stat->get_result();
+
+    }
+
+    public function updateData($id , $user_name , $user_email , $user_pass , $user_num , $user_country ,
+        $user_city , $user_profile_img){
+        
+
+        if (!empty($user_pass)) {
+            $hash = password_hash($user_pass , PASSWORD_BCRYPT);
+        }
+        else{
+            $old_pass = $this->getByID($id);
+            $get_old_pass = $old_pass->fetch_assoc();
+            $hash = $get_old_pass['user_pass'];
+        };
+
+
+        $final_img = "";
+
+        if (!empty($user_profile_img)) {
+            $final_img = $_FILES['user_img'];
+
+        $target_dir = "uploads/";
+        $file_name = uniqid() . "_" . basename($final_img['name']);
+        $target_file = $target_dir . $file_name;
+
+        if (move_uploaded_file($final_img['tmp_name'] , $target_file)) {
+            $final_img = $target_file;
+        }
+    }
+        else{
+            $old_img = $this->getByID($id);
+            $get_old_img = $old_img->fetch_assoc();
+            $new_img = $get_old_img['user_profile_img'];
+        }
+
+        $update_query = "UPDATE user_data SET user_name = ? , user_email = ? , user_pass = ? , user_num = ? , 
+        user_country = ? , user_city = ? , user_profile_img = ? WHERE id = ?";
+        $stat = $this->conn->prepare($update_query);
+        $stat->bind_param("sssisssi" , $user_name , $user_email , $hash , $user_num , $user_country ,
+        $user_city , $final_img , $id);
+        return $stat->execute();
+    }
+
+    public function deleteData($id){
+
+        $delete_query = "DELETE FROM user_data WHERE id = ?";
+        $stat = $this->conn->prepare($delete_query);
+        $stat->bind_param("i" , $id);
+        return $stat->execute();
+
+    }
 }

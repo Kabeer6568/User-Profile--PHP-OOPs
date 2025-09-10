@@ -10,8 +10,6 @@ $user = new Users;
 if (!isset($_SESSION['user_id'])) {
     echo "You must me login to view this page";
 }
-else{
-    echo "Hello";
-}
+
 
 
