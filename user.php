@@ -72,7 +72,15 @@ class Users{
                 $_SESSION['user_id'] = $rows['id'];
                 $_SESSION['user_name'] = $rows['user_name'];
 
-                echo "Login successful. Welcome" . htmlspecialchars($rows['user_name']);
+
+                if ($rows['id'] === 6) {
+                    header("location: index.php");
+                }
+                else{
+                    header("location: profile.php");
+                }
+
+                
             }
             else{
                 echo "Incorrect Password";
@@ -82,7 +90,21 @@ class Users{
             echo "Incorrect Username Or Email";
         }
 
+    }
 
+    public function adminPanel(){
+
+        $id = $_SESSION['user_id'];
+
+        if ($id != 6) {
+            echo "ONLY ADMIN CAN VIEW THIS PAGE";
+        }
+    }
+
+    public function checkLogin(){
+        if (!empty($_SESSION['user_id'])) {
+            header("location: profile.php");
+        }
     }
 
 }

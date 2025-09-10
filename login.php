@@ -6,10 +6,7 @@ session_start();
 
 $user = new Users;
 
-if (isset($_POST['login'])) {
-    $user->login($_POST['username'] , $_POST['userpass']);
-};
-
+$user->checkLogin();
 ?>
 
 
@@ -27,3 +24,13 @@ if (isset($_POST['login'])) {
 </form>
 <br>
 <p>Dont have an account? <a href="register.php">Register Here</a></p>
+
+<?php
+    if (isset($_POST['login'])) {
+    $user->login($_POST['username'] , $_POST['userpass']);
+    };
+
+?>
+
+
+

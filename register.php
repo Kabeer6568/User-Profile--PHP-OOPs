@@ -1,8 +1,14 @@
 <?php
 
+
+
 require_once "user.php";
 
+session_start();
+
 $user = new Users;
+
+$user->checkLogin();
 
 
 
